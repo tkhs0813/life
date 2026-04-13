@@ -1,0 +1,17 @@
+feeds:
+  - name: Hacker News
+    url: https://hnrss.org/frontpage
+  - name: web.dev
+    url: https://web.dev/feed.xml
+  - name: Smashing Magazine
+    url: https://www.smashingmagazine.com/feed/
+  - name: Zenn.dev
+    url: https://zenn.dev/feed
+  - name: hatena
+    url: https://b.hatena.ne.jp/hotentry/it.rss
+  - name: jser.info
+    url: https://realtime.jser.info/feed.xml
+  - name: Javascript Weekly
+    url: https://cprss.s3.amazonaws.com/javascriptweekly.com.xml
+  - name: Node Weekly
+    url: https://cprss.s3.amazonaws.com/nodeweekly.com.xml
