@@ -24,6 +24,32 @@ RSSフィードから注目記事を収集し、日本語のMarkdownダイジェ
 3. 取得したXMLから最新の記事タイトル・URL・概要を抽出する
 4. フィード取得に失敗した場合はスキップして次のフィードに進む
 
+#### Reddit (`www.reddit.com`) のフォールバック
+
+WebFetchは `www.reddit.com` へのアクセスをブロックする（`Claude Code is unable to fetch from www.reddit.com`）ため、Reddit系フィードはBash経由で`curl`を使って取得する。UserAgentを指定しないと403になる点に注意。
+
+```bash
+curl -s -A "Mozilla/5.0 (compatible; daily-digest-bot/1.0)" \
+  "https://www.reddit.com/r/<subreddit>/.rss" -o "/tmp/reddit_<subreddit>.xml"
+```
+
+取得後は以下のようなPythonワンライナーで `<entry>` からタイトル・URL・更新日を抽出する:
+
+```bash
+python3 -c "
+import re, html
+with open('/tmp/reddit_<subreddit>.xml') as f:
+    x = f.read()
+for e in re.findall(r'<entry>.*?</entry>', x, re.DOTALL)[:8]:
+    t = re.search(r'<title>(.*?)</title>', e, re.DOTALL)
+    u = re.search(r'<link href=\"([^\"]+)\"', e)
+    upd = re.search(r'<updated>([^<]+)</updated>', e)
+    if t and u:
+        print(f'[{upd.group(1) if upd else \"?\"}] {html.unescape(t.group(1).strip())}')
+        print(f'  {u.group(1)}')
+"
+```
+
 ### Step 3: 記事の選定
 
 全フィードの記事から注目すべきものをピックアップする。選定基準:
